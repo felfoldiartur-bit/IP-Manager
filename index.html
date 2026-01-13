@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IP Manager BETA</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/10044/10044800.png">
+
+    <style>
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: white; margin: 0; padding: 15px; text-align: center; }
+        
+        /* --- STIL TITLU SI BETA ANIMAT --- */
+        .header-container {
+            margin: 20px 0 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .main-title {
+            color: #38bdf8;
+            margin: 0;
+            font-size: 26px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 900;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .beta-badge {
+            background: linear-gradient(45deg, #facc15, #f59e0b);
+            color: #0f172a;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(250, 204, 21, 0.3);
+            /* Animatia de miscare/plutire */
+            animation: floatBeta 2s ease-in-out infinite;
+        }
+
+        @keyframes floatBeta {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        /* ---------------------------------- */
+
+        .info-box {
+            background: rgba(56, 189, 248, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px auto 20px auto;
+            max-width: 350px;
+            width: 90%;
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+        .info-box b { color: #38bdf8; display: block; margin-bottom: 5px; font-size: 14px; }
+
+        .container { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        
+        .btn-auto {
+            background: #2563eb; border: 2px solid #3b82f6; color: white; padding: 22px;
+            border-radius: 16px; font-size: 19px; font-weight: bold;
+            width: 90%; max-width: 350px; margin: 10px auto 25px auto;
+            cursor: pointer; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+            display: flex; flex-direction: column; align-items: center;
+            transition: transform 0.1s;
+        }
+        .btn-auto small { font-size: 12px; font-weight: normal; opacity: 0.8; margin-top: 4px; }
+
+        .btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #1e293b; border: 1px solid #334155; color: white;
+            padding: 15px; border-radius: 12px; text-decoration: none;
+            width: 90%; max-width: 350px; cursor: pointer;
+        }
+        
+        .btn:active, .btn-auto:active { transform: scale(0.96); background: #38bdf8; }
+        .btn.custom { background: #0369a1; border-color: #0ea5e9; }
+        .btn.speedtest { background: #0E1187; border-color: #3b82f6; margin-top: 5px; }
+
+        .name { font-weight: bold; font-size: 15px; }
+        .ip { font-family: monospace; color: #94a3b8; font-size: 13px; }
+
+        .pass-box {
+            background: #1e293b; border-radius: 12px; margin: 25px auto 0 auto;
+            padding: 15px; text-align: left; border-left: 4px solid #2563eb;
+            width: 90%; max-width: 350px;
+        }
+        .pass-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #38bdf8; text-transform: uppercase; }
+        .pass-item { font-size: 13px; margin-bottom: 8px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+        .pass-item b { color: #facc15; }
+        
+        #status { font-size: 12px; color: #fbbf24; margin-bottom: 15px; display: none; min-height: 18px; }
+        .footer { margin-top: 25px; font-size: 11px; color: #64748b; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <h1 class="main-title">IP MANAGER</h1>
+        <span class="beta-badge">BETA</span>
+    </div>
+
+    <div class="info-box">
+        <b>ℹ️ Despre Aplicație</b>
+        Gestionează rapid routerele din rețea. Detectează automat gateway-ul sau accesează manual interfețele de configurare.
+    </div>
+    
+    <div class="container">
+        <button class="btn-auto" onclick="autoDetect()">
+            🚀 GESTIONARE AUTOMATĂ
+            <small>Detectare Gateway Principal</small>
+        </button>
+        
+        <div id="status">Se încearcă conexiunea...</div>
+
+        <h2 style="font-size: 16px; color: #94a3b8;">🔗 IP-URI FRECVENTE</h2>
+        
+        <div class="btn" onclick="openRouter('http://192.168.1.1')">
+            <span class="name">Standard ( TP-Link / ZTE )</span>
+            <span class="ip">192.168.1.1</span>
+        </div>
+
+        <div class="btn" onclick="openRouter('http://192.168.100.1')">
+            <span class="name">ONT Huawei</span>
+            <span class="ip">192.168.100.1</span>
+        </div>
+
+        <div class="btn" onclick="openRouter('http://192.168.0.1')">
+            <span class="name">D-Link / Tenda</span>
+            <span class="ip">192.168.0.1</span>
+        </div>
+
+        <button onclick="connectCustom()" class="btn custom">
+            <span class="name">⌨️ Alt IP (Manual)</span>
+        </button>
+
+        <button onclick="openSpeedTest()" class="btn speedtest">
+            <span class="name">⏲️ TEST VITEZĂ</span>
+        </button>
+    </div>
+
+    <div class="pass-box">
+        <h3>🔑 Parole ONT - Router</h3>
+        <div class="pass-item"><b>ZTE / Huawei:</b> admin / digi sau user / digi</div>
+        <div class="pass-item"><b>Kaon:</b> user / user (AR-4010N)</div>
+        <div class="pass-item"><b>Tp-Link {DIGI}:</b> admin / digi</div>
+        <div class="pass-item"><b>Tp-Link:</b> admin / admin</div>
+        <div class="pass-item"><b>MikroTik:</b> admin / (fără parolă)</div>
+    </div>
+    
+    <p class="footer">
+        <b>By. Karcsi</b> - Instrument Tehnic
+    </p>
+
+   <script>
+        function toggleDropdown() {
+            const content = document.getElementById('extraIPs');
+            content.style.display = content.style.display === "block" ? "none" : "block";
+        }
+
+        function openRouter(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        function openSpeedTest() {
+            window.open('https://speedcheck-b.rcs-rds.ro:3001/', '_blank');
+        }
+
+        async function autoDetect() {
+            const status = document.getElementById('status');
+            status.style.display = "block";
+            status.innerText = "Se caută routerul activ...";
+            const ips =["192.168.1.1","192.168.100.1","192.168.101.1","192.168.1.254:8899","192.168.0.1","192.168.31.1","192.168.88.1"];
+            let found = false;
+
+            for (let ip of ips) {
+                try {
+                    const controller = new AbortController();
+                    setTimeout(() => controller.abort(), 700);
+                    await fetch(`http://${ip}`, { mode: 'no-cors', signal: controller.signal });
+                    found = true;
+                    status.innerText = "Găsit! Se deschide " + ip;
+                    openRouter(`http://${ip}`);
+                    return;
+                } catch (e) {
+                    console.log(ip + " nu raspunde");
+                }
+            }
+
+            if (!found) {
+                status.innerText = "Detectam IP activ..";
+                setTimeout(() => openRouter("http://192.168.1.1"), 1000);
+            }
+        }
+
+        function connectCustom() {
+            let userIp = prompt("Introdu IP-ul routerului:", "192.168.");
+            if (userIp) {
+                let cleanIp = userIp.trim();
+                if (!cleanIp.startsWith('http')) cleanIp = 'http://' + cleanIp;
+                openRouter(cleanIp);
+            }
+        }
+    </script>
+</body>
+</html>
